@@ -1,0 +1,124 @@
+= Payroll Spring JDBC Client Example
+
+:toc:
+:toclevels: 2
+:sectnums:
+:sectnumlevels: 3
+
+== YouTube Livestream
+
+[video, youtube, width=640, height=360, align=center, poster="thumbnail.jpg"]
+----
+Insert YouTube livestream link here.
+----
+
+== Introduction
+
+This project is an example demonstrating how to use CockroachDB with Spring Boot, specifically using the `JdbcClient` as the principal tool for building applications. It showcases basic CRUD operations and how to interact with a CockroachDB database.
+
+== Prerequisites
+
+* Java 17
+* Maven
+* CockroachDB
+
+== Getting Started
+
+To get started with this project, follow these steps:
+
+1. Clone the repository:
++
+[source,bash]
+----
+git clone <repository-url>
+cd payroll-spring-jdbcclient-example
+----
++
+2. Build the project:
++
+[source,bash]
+----
+mvn clean install
+----
++
+3. Run the application:
++
+[source,bash]
+----
+mvn spring-boot:run
+----
+
+NOTE: Due to CockroachDB running its DBConsole on port 8080, this application runs on port 8000 instead of Apache Tomcat's default port 8080.
+
+== Configuration
+
+The application is configured to connect to a CockroachDB instance. Update the `application.properties` file with your database connection details.
+
+== Database Schema
+
+The database schema is automatically created by the application. The `DatabaseLoader` class initializes the database with some sample data.
+
+== API Endpoints
+
+The application exposes the following REST API endpoints:
+
+* `GET /api/employees` - Retrieve all employees
+* `GET /api/employees/{role}` - Retrieve employees by role
+* `GET /api/employees/followers/{role}` - Retrieve employees by role with follower reads
+
+== Code Overview
+
+=== `DatabaseLoader`
+
+The `DatabaseLoader` class initializes the database with sample data.
+
+[source,java]
+----
+@Bean
+public CommandLineRunner initDatabase(EmployeeRepository repository) {
+    return args -> {
+        repository.save(new Employee("Frodo Baggins", "ring bearer"));
+        repository.save(new Employee("Bilbo Baggins", "burglar"));
+        repository.save(new Employee("Samwise Gamgee", "gardener"));
+    };
+}
+----
+
+=== `ApiController`
+
+The `ApiController` class provides REST API endpoints to interact with the employee data.
+
+[source,java]
+----
+@GetMapping("/api/employees")
+List<Employee> findAll() {
+    return repository.findAll();
+}
+
+@GetMapping("/api/employees/{role}")
+List<Employee> findByRole(@PathVariable String role) {
+    return repository.findByRole(role);
+}
+
+@GetMapping("/api/employees/followers/{role}")
+List<Employee> findByRoleWithFollowerRead(@PathVariable String role) {
+    return repository.findByRoleWithFollowerRead(role);
+}
+----
+
+== License
+
+This project is licensed under the Apache Server License 2.0.
+
+== More Content
+
+If you are interested in more content, check out all these places where you can learn absolutely everything about the database you just can't fill:
+
+Want to catch the audio AND the video?
+
+* https://www.youtube.com/playlist?list=PL_QaflmEF2e8MlTvSR0Iq8yAUcJzlKPSI[SELECT STAR on YouTube]
+* https://open.spotify.com/show/6Pyh9Ki2pEJ6KH1EYiZjNw[SELECT STAR on Spotify]
+
+Want to tune in to SELECT STAR during your commute or download to listen on a plane?
+
+* https://creators.spotify.com/pod/show/select-star-show[Audio Podcast]
